@@ -1,40 +1,32 @@
 class User {
-  String? id;
-  String? email;
-  String? name;
-  String? phone;
-  String? password;
-  String? otp;
-  String? datereg;
+  String? userid;
+  String? useremail;
+  String? username;
+  String? userpassword;
+  String? userdatereg;
 
   User(
-      {this.id,
-      this.email,
-      this.name,
-      this.phone,
-      this.password,
-      this.otp,
-      this.datereg});
+      {this.userid,
+      this.useremail,
+      this.username,
+      this.userpassword,
+      this.userdatereg});
 
   User.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    email = json['email'];
-    name = json['name'];
-    phone = json['phone'];
-    password = json['password'];
-    otp = json['otp'];
-    datereg = json['datereg'];
+    userid = json['userid'];
+    useremail = json['useremail'];
+    username = json['username'];
+    userpassword = json['userpassword'];
+    userdatereg = json['userdatereg'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['email'] = email;
-    data['name'] = name;
-    data['phone'] = phone;
-    data['password'] = password;
-    data['otp'] = otp;
-    data['datereg'] = datereg;
+    data['userid'] = userid;
+    data['useremail'] = useremail;
+    data['username'] = username;
+    data['userpassword'] = userpassword;
+    data['userdatereg'] = userdatereg;
     return data;
   }
 }

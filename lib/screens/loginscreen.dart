@@ -1,267 +1,198 @@
-import 'dart:async';
+
+
 import 'dart:convert';
-import 'package:book_bytes/models/user.dart';
-import 'package:book_bytes/myconfig.dart';
-import 'package:book_bytes/screens/registration.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'mainscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+import '../models/user.dart';
+import '../myconfig.dart';
+import 'mainpage.dart';
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailEditingController = TextEditingController();
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailditingController = TextEditingController();
   final TextEditingController _passEditingController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  late double screenHeight, screenWidth, cardwitdh;
   bool _isChecked = false;
 
   @override
   void initState() {
     super.initState();
-    loadPref();
+    loadpref();
   }
 
   @override
   Widget build(BuildContext context) {
-    screenHeight = MediaQuery.of(context).size.height;
-    screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Login"),
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-          child: Column(
-        children: [
-          SizedBox(
-              height: screenHeight * 0.40,
-              width: screenWidth,
-              child: Image.asset(
-                "assets/images/registration.png",
-                fit: BoxFit.cover,
-              )),
-          const SizedBox(
-            height: 5,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Card(
-              elevation: 8,
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-                child: Column(children: [
-                  Form(
-                    key: _formKey,
-                    child: Column(children: [
-                      TextFormField(
-                          controller: _emailEditingController,
+        appBar: AppBar(
+          title: const Text("Login Page"),
+        ),
+        body: SingleChildScrollView(
+          child: Center(
+            child: Column(children: [
+              Image.asset("assets/images/registration.png"),
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: Form(
+                  key: _formKey,
+                  child: Card(
+                    elevation: 10,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                      child: Column(children: [
+                        const Text(
+                          "User Login",
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        TextFormField(
+                          controller: _emailditingController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: const InputDecoration(
+                            labelText: 'Email',
+                            icon: Icon(Icons.email),
+                          ),
                           validator: (val) => val!.isEmpty ||
                                   !val.contains("@") ||
                                   !val.contains(".")
-                              ? "Enter a valid email"
+                              ? "Please enter a valid email"
                               : null,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(
-                              labelText: 'Email',
-                              labelStyle: TextStyle(),
-                              icon: Icon(Icons.email),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(width: 2.0),
-                              ))),
-                      TextFormField(
+                        ),
+                        TextFormField(
                           controller: _passEditingController,
-                          validator: (val) => val!.isEmpty || (val.length < 5)
-                              ? "Password must be longer than 5"
-                              : null,
+                          keyboardType: TextInputType.text,
                           obscureText: true,
                           decoration: const InputDecoration(
-                              labelText: 'Password',
-                              labelStyle: TextStyle(),
-                              icon: Icon(Icons.lock),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(width: 2.0),
-                              ))),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Checkbox(
-                            value: _isChecked,
-                            onChanged: (bool? value) {
-                              saveremovepref(value!);
-                              setState(() {
-                                _isChecked = value;
-                              });
-                            },
+                            labelText: 'Password',
+                            icon: Icon(Icons.lock),
                           ),
-                          Flexible(
-                            child: GestureDetector(
-                              onTap: null,
-                              child: const Text('Remember Me',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                            ),
-                          ),
-                          MaterialButton(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0)),
-                            minWidth: screenWidth / 3,
-                            height: 50,
-                            elevation: 10,
-                            onPressed: onLogin,
-                            color: Theme.of(context).colorScheme.primary,
-                            textColor: Theme.of(context).colorScheme.onError,
-                            child: const Text('Login'),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                    ]),
-                  )
-                ]),
+                          validator: (val) => val!.isEmpty || (val.length < 3)
+                              ? "Please enter password"
+                              : null,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(children: [
+                              Checkbox(
+                                value: _isChecked,
+                                onChanged: (bool? value) {
+                                  if (!_formKey.currentState!.validate()) {
+                                    return;
+                                  }
+                                  saveremovepref(value!);
+                                  setState(() {
+                                    _isChecked = value;
+                                  });
+                                },
+                              ),
+                              const Text("Remember Me"),
+                            ]),
+                            ElevatedButton(
+                                onPressed: () {
+                                  _loginUser();
+                                },
+                                child: const Text("Login"))
+                          ],
+                        )
+                      ]),
+                    ),
+                  ),
+                ),
               ),
-            ),
+            ]),
           ),
-          const SizedBox(
-            height: 8,
-          ),
-          GestureDetector(
-            onTap: _goToRegister,
-            child: const Text(
-              "New account?",
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          GestureDetector(
-            onTap: _forgotDialog,
-            child: const Text(
-              "Forgot Password?",
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-          ),
-        ],
-      )),
-    );
+        ));
   }
 
-  void onLogin() {
+  void _loginUser() {
     if (!_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Invalid input")));
       return;
     }
-    String email = _emailEditingController.text;
+    String email = _emailditingController.text;
     String pass = _passEditingController.text;
-    try {
-      http.post(Uri.parse("${MyConfig().SERVER}/book_bytes/php/login_user.php"),
-          body: {
-            "email": email,
-            "password": pass,
-          }).then((response) {
-        if (response.statusCode == 200) {
-          var jsondata = jsonDecode(response.body);
-          if (jsondata['status'] == 'success') {
-            User user = User.fromJson(jsondata['data']);
-            ScaffoldMessenger.of(context)
-                .showSnackBar(const SnackBar(content: Text("Login Success")));
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (content) => MainScreen(
-                          user: user,
-                        )));
-          } else {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(const SnackBar(content: Text("Login Failed")));
-          }
+
+    http.post(
+        Uri.parse("${MyConfig.server}/book_bytes/php/login_user.php"),
+        body: {"email": email, "password": pass}).then((response) {
+      // print(response.statusCode);
+      // print(response.body);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data['status'] == "success") {
+          User user = User.fromJson(data['data']);
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Login Success"),
+            backgroundColor: Colors.green,
+          ));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (content) =>  MainPage(userdata:user)));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Login Failed"),
+            backgroundColor: Colors.red,
+          ));
         }
-      }).timeout(const Duration(seconds: 5), onTimeout: () {
-        // Time has run out, do what you wanted to do.
-      });
-    } on TimeoutException catch (_) {}
+      }
+    });
   }
 
-  void _forgotDialog() {}
-
-  void _goToRegister() {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (content) => const Registration()));
-  }
+  // User user = User(
+  //     userid: data['data']['userid'],
+  //     useremail: data['data']['useremail'],
+  //     username: data['data']['username'],
+  //     userdatereg: data['data']['userdatereg'],
+  //     userpassword: data['data']['userpassword']);
+  // print(user.username);
+  // print(user.useremail);
+  // print(user.userid);
 
   void saveremovepref(bool value) async {
-    FocusScope.of(context).requestFocus(FocusNode());
-    String email = _emailEditingController.text;
+    String email = _emailditingController.text;
     String password = _passEditingController.text;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (value) {
-      //save preference
-      if (!_formKey.currentState!.validate()) {
-        _isChecked = false;
-        return;
-      }
+      //safe pref
       await prefs.setString('email', email);
       await prefs.setString('pass', password);
-      await prefs.setBool("checkbox", value);
-      // ScaffoldMessenger.of(context)
-      //     .showSnackBar(const SnackBar(content: Text("Preferences Stored")));
-      Fluttertoast.showToast(
-          msg: "Preferences Stored",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          fontSize: 16.0);
+      await prefs.setBool('rem', value);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Preferences Stored"),
+        backgroundColor: Colors.green,
+      ));
     } else {
-      //delete preference
+      //remove pref
       await prefs.setString('email', '');
       await prefs.setString('pass', '');
-      await prefs.setBool('checkbox', false);
-      setState(() {
-        _emailEditingController.text = '';
-        _passEditingController.text = '';
-        _isChecked = false;
-      });
-      // ScaffoldMessenger.of(context)
-      //     .showSnackBar(const SnackBar(content: Text("Preferences Removed")));
-       Fluttertoast.showToast(
-          msg: "Preferences Removed",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          fontSize: 16.0);
+      await prefs.setBool('rem', false);
+      _emailditingController.text = '';
+      _passEditingController.text = '';
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Preferences Removed"),
+        backgroundColor: Colors.red,
+      ));
     }
   }
 
-  Future<void> loadPref() async {
+  Future<void> loadpref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String email = (prefs.getString('email')) ?? '';
     String password = (prefs.getString('pass')) ?? '';
-    _isChecked = (prefs.getBool('checkbox')) ?? false;
+    _isChecked = (prefs.getBool('rem')) ?? false;
     if (_isChecked) {
-      setState(() {
-        _emailEditingController.text = email;
-        _passEditingController.text = password;
-      });
+      _emailditingController.text = email;
+      _passEditingController.text = password;
     }
+    setState(() {});
   }
 }

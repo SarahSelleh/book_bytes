@@ -1,228 +1,164 @@
 import 'dart:convert';
 import 'package:book_bytes/myconfig.dart';
+import 'package:book_bytes/screens/loginscreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 class Registration extends StatefulWidget {
   const Registration({super.key});
 
   @override
-  State<Registration> createState() => _RegistrationState();
+  State<Registration> createState() => _RegistrationPageState();
 }
 
-class _RegistrationState extends State<Registration> {
+class _RegistrationPageState extends State<Registration> {
   final TextEditingController _nameEditingController = TextEditingController();
-  final TextEditingController _emailEditingController = TextEditingController();
-  final TextEditingController _phoneEditingController = TextEditingController();
+  final TextEditingController _emailditingController = TextEditingController();
   final TextEditingController _passEditingController = TextEditingController();
   final TextEditingController _pass2EditingController = TextEditingController();
-  bool _isChecked = false;
   final _formKey = GlobalKey<FormState>();
-  late double screenHeight, screenWidth, cardwitdh;
+  String eula = "";
+  bool _isChecked = false;
 
   @override
   Widget build(BuildContext context) {
-    screenHeight = MediaQuery.of(context).size.height;
-    screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("User Registration"),
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        child: Column(children: [
-          SizedBox(
-            height: screenHeight * 0.35,
-            width: screenWidth,
-            child: Image.asset('assets/images/registration.png', fit: BoxFit.cover)
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Card(
-            elevation: 8,
-            child: Container(
-              margin: const EdgeInsets.all(16),
-              child: Column(children: [
-                Form(
+        appBar: AppBar(title: const Text("Registration Form")),
+        body: SingleChildScrollView(
+          child: Center(
+            child: Column(children: [
+              Image.asset("assets/images/registration.png"),
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: Form(
                   key: _formKey,
-                  child: Column(children: [
-                    TextFormField(
-                      controller: _nameEditingController,
-                      validator: (val) => val!.isEmpty || (val.length < 5)
-                        ? "Name must be longer than 5"
-                        : null,
-                      keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                        labelText: 'Name',
-                        labelStyle: TextStyle(),
-                        icon: Icon(Icons.person),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(width: 2.0),
-                        )
-                      )
-                    ),
-                    
-                    TextFormField(
-                      controller: _phoneEditingController,
-                      validator: (val) => val!.isEmpty || (val.length < 10)
-                        ? "Phone number must be equal or longer than 10"
-                        : null,
-                      keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                        labelText: 'Phone Number',
-                        labelStyle: TextStyle(),
-                        icon: Icon(Icons.phone),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(width: 2.0),
-                        )
-                      )
-                    ),
-                    
-                    TextFormField(
-                      controller: _emailEditingController,
-                      validator: (val) => val!.isEmpty || 
-                        !val.contains("@") ||
-                        !val.contains(".")
-                        ? "Enter a valid email address"
-                        : null,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        labelStyle: TextStyle(),
-                        icon: Icon(Icons.email),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(width: 2.0),
-                        )
-                      )
-                    ),
-                    
-                    TextFormField(
-                      controller: _passEditingController,
-                      validator: (val) => val!.isEmpty || (val.length < 5)
-                        ? "Password must be longer than 5"
-                        : null,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                        labelStyle: TextStyle(),
-                        icon: Icon(Icons.lock),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(width: 2.0),
-                        )
-                      )),
-                    
-                    TextFormField(
-                      controller: _pass2EditingController,
-                      validator: (val) => val!.isEmpty || (val.length < 5)
-                        ? "Password must be longer than 5"
-                        : null,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Re-enter password',
-                        labelStyle: TextStyle(),
-                        icon: Icon(Icons.lock),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(width: 2.0),
-                        )
-                      )
-                    ),
-        
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _isChecked, 
-                          onChanged: (bool? value){
-                            if (!_isChecked) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            "Terms have been read and accepted.")));
-                              }
-                            setState(() {
-                              _isChecked = value!;
-                            });
-                          },
+                  child: Card(
+                    elevation: 10,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                      child: Column(children: [
+                        const Text(
+                          "User Registration",
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
                         ),
-        
-                        GestureDetector(
-                          onTap: null,
-                          child: const Text('Agree with terms',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            )),
+                        TextFormField(
+                          controller: _nameEditingController,
+                          keyboardType: TextInputType.text,
+                          decoration: const InputDecoration(
+                            labelText: 'Name',
+                            icon: Icon(Icons.person),
+                          ),
+                          validator: (val) => val!.isEmpty || (val.length < 3)
+                              ? "name must be longer than 3"
+                              : null,
                         ),
-        
-                        const SizedBox(
-                          width: 16,
+                        TextFormField(
+                          controller: _emailditingController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: const InputDecoration(
+                            labelText: 'Email',
+                            icon: Icon(Icons.email),
+                          ),
+                          validator: (val) => val!.isEmpty ||
+                                  !val.contains("@") ||
+                                  !val.contains(".")
+                              ? "enter a valid email"
+                              : null,
                         ),
-        
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: onRegisterDialog, 
-                            child: const Text("Register")
-                          )
+                        TextFormField(
+                          controller: _passEditingController,
+                          keyboardType: TextInputType.text,
+                          obscureText: true,
+                          decoration: const InputDecoration(
+                            labelText: 'Password',
+                            icon: Icon(Icons.lock),
+                          ),
+                          validator: (val) => validatePassword(val.toString()),
+                        ),
+                        TextFormField(
+                          controller: _pass2EditingController,
+                          keyboardType: TextInputType.text,
+                          obscureText: true,
+                          decoration: const InputDecoration(
+                            labelText: 'Re-enter Password',
+                            icon: Icon(Icons.lock),
+                          ),
+                          validator: (val) => validatePassword(val.toString()),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Checkbox(
+                              value: _isChecked,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _isChecked = value!;
+                                });
+                              },
+                            ),
+                            GestureDetector(
+                                onTap: _showEULA,
+                                child: const Text("Agree with terms?")),
+                            ElevatedButton(
+                                onPressed: _registerUserDialog,
+                                child: const Text("Register"))
+                          ],
                         )
-                      ],
-                    )
-                ]),)
-              ]),
-            ),
-          ),
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-        GestureDetector(
-            onTap: _goLogin,
-            child: const Text(
-              "Already Registered? Login",
-              style: TextStyle(
-                fontSize: 18,
+                      ]),
+                    ),
+                  ),
+                ),
               ),
-            ),
+            ]),
           ),
-          const SizedBox(
-            height: 16,
-          ),
-        ]),
-      ),
-    );
+        ));
   }
 
-  void onRegisterDialog() {
-    if (!_formKey.currentState!.validate()){
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Invalid input")));
+  String? validatePassword(String value) {
+    String pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$';
+    RegExp regex = RegExp(pattern);
+    if (value.isEmpty) {
+      return 'Please enter password';
+    } else {
+      if (!regex.hasMatch(value)) {
+        return 'Enter valid password';
+      } else {
+        return null;
+      }
+    }
+  }
+
+  void _registerUserDialog() {
+    String pass = _passEditingController.text;
+    String pass2 = _pass2EditingController.text;
+    if (!_formKey.currentState!.validate()) {
       return;
     }
     if (!_isChecked) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Please agree with terms and conditions")));
+        content: Text("Please accept EULA"),
+        backgroundColor: Colors.red,
+      ));
       return;
     }
-
-    String passa = _passEditingController.text;
-    String passb = _pass2EditingController.text;
-    if (passa != passb) {
+    if (pass != pass2) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Password and re-enter password does not match")));
+        content: Text("Password do not match!"),
+        backgroundColor: Colors.red,
+      ));
       return;
     }
 
     showDialog(
-      context: context, 
-      builder: (BuildContext context){
+      context: context,
+      builder: (BuildContext context) {
         return AlertDialog(
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10.0))
-          ),
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
           title: const Text(
-            "Register new account",
+            "Register new account?",
             style: TextStyle(),
           ),
           content: const Text("Are you sure?", style: TextStyle()),
@@ -234,7 +170,7 @@ class _RegistrationState extends State<Registration> {
               ),
               onPressed: () {
                 Navigator.of(context).pop();
-                registerUser();
+                _registerUser();
               },
             ),
             TextButton(
@@ -244,6 +180,10 @@ class _RegistrationState extends State<Registration> {
               ),
               onPressed: () {
                 Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text("Registration Canceled"),
+                  backgroundColor: Colors.red,
+                ));
               },
             ),
           ],
@@ -252,51 +192,83 @@ class _RegistrationState extends State<Registration> {
     );
   }
 
-    void registerUser() {
-      showDialog(
-        context: context, 
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            title: Text("Please Wait"),
-            content: Text("Registration..."),
-          );
-        },
-      );
+  loadEula() async {
+    eula = await rootBundle.loadString('assets/eula.txt');
+  }
 
-      String name = _nameEditingController.text;
-      String email = _emailEditingController.text;
-      String phone = _phoneEditingController.text;
-      String pass = _passEditingController.text;
-    
-    
-      http.post(Uri.parse("${MyConfig().SERVER}/book_bytes/php/register_user.php"),
+  void _showEULA() {
+    loadEula();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            "EULA",
+            style: TextStyle(),
+          ),
+          content: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: SingleChildScrollView(
+                      child: RichText(
+                    softWrap: true,
+                    textAlign: TextAlign.justify,
+                    text: TextSpan(
+                        style: const TextStyle(
+                            fontSize: 12.0, color: Colors.black),
+                        text: eula),
+                  )),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                "Close",
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  void _registerUser() {
+    String name = _nameEditingController.text;
+    String email = _emailditingController.text;
+    String pass = _passEditingController.text;
+
+    http.post(
+        Uri.parse(MyConfig.server + "/book_bytes/php/register_user.php"),
         body: {
-          "name": name, 
-          "phone": phone, 
-          "email": email, 
-          "password": pass,
+          "name": name,
+          "email": email,
+          "password": pass
         }).then((response) {
-        //print(response.body);
-        if (response.statusCode == 200) {
-          var jsondata = jsonDecode(response.body);
-          if (jsondata['status'] == 'success') {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Registration Success"))
-            );
-          }
-          else{
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Registration Failed"))
-            );
-          }
-          Navigator.pop(context);
-        }else{
-          ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Registration Failed")));
-        Navigator.pop(context);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data['status'] == "success") {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Registration Success"),
+            backgroundColor: Colors.green,
+          ));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (content) => const LoginPage()));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Registration Failed"),
+            backgroundColor: Colors.red,
+          ));
         }
-      });
-    }
-
-    void _goLogin(){}
+      }
+    });
+  }
 }

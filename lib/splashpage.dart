@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:book_bytes/myconfig.dart';
-import 'package:book_bytes/screens/mainscreen.dart';
+import 'package:book_bytes/screens/mainpage.dart';
 import 'package:flutter/material.dart';
 import '../../../models/user.dart';
 import 'package:http/http.dart' as http;
@@ -19,10 +19,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     checkAndLogin();
-    //Timer(
-    //  const Duration(seconds: 6),
-    //  () => Navigator.pushReplacement(context, 
-    //      MaterialPageRoute(builder: (content) => const MainScreen(user: user,))));
     
   }
   @override
@@ -70,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (ischeck) {
       try {
         http.post(
-            Uri.parse("${MyConfig().SERVER}/mynelayan/php/login_user.php"),
+            Uri.parse("${MyConfig.server}/book_bytes/php/login_user.php"),
             body: {"email": email, "password": password}).then((response) {
           if (response.statusCode == 200) {
             var jsondata = jsonDecode(response.body);
@@ -83,38 +79,34 @@ class _SplashScreenState extends State<SplashScreen> {
                   () => Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (content) => MainScreen(user: user))));
+                          builder: (content) => MainPage(userdata: user))));
             } else {
-              user = User(
-                  id: "na",
-                  name: "na",
-                  email: "na",
-                  phone: "na",
-                  datereg: "na",
-                  password: "na",
-                  otp: "na");
+              User user = User(
+                userid: "0",
+                useremail: "unregistered@email.com",
+                username: "Unregistered",
+                userdatereg: "",
+                userpassword: "");
               Timer(
                   const Duration(seconds: 3),
                   () => Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (content) => MainScreen(user: user))));
+                          builder: (content) => MainPage(userdata: user))));
             }
           } else {
-            user = User(
-                id: "na",
-                name: "na",
-                email: "na",
-                phone: "na",
-                datereg: "na",
-                password: "na",
-                otp: "na");
+            User user = User(
+                userid: "0",
+                useremail: "unregistered@email.com",
+                username: "Unregistered",
+                userdatereg: "",
+                userpassword: "");
             Timer(
                 const Duration(seconds: 3),
                 () => Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (content) => MainScreen(user: user))));
+                        builder: (content) => MainPage(userdata: user))));
           }
         }).timeout(const Duration(seconds: 5), onTimeout: () {
           // Time has run out, do what you wanted to do.
@@ -122,18 +114,16 @@ class _SplashScreenState extends State<SplashScreen> {
       } on TimeoutException catch (_) {
       }
     } else {
-      user = User(
-          id: "na",
-          name: "na",
-          email: "na",
-          phone: "na",
-          datereg: "na",
-          password: "na",
-          otp: "na");
+      User user = User(
+                userid: "0",
+                useremail: "unregistered@email.com",
+                username: "Unregistered",
+                userdatereg: "",
+                userpassword: "");
       Timer(
           const Duration(seconds: 3),
           () => Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (content) => MainScreen(user: user))));
+              MaterialPageRoute(builder: (content) => MainPage(userdata: user))));
     }
   }
 }

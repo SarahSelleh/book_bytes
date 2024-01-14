@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../models/book.dart';
@@ -19,8 +20,6 @@ class _BookDetailsState extends State<BookDetails> {
   late double screenWidth, screenHeight;
   bool bookowner = false;
 
-  
-
   @override
   Widget build(BuildContext context) {
     if (widget.user.userid == widget.book.userId) {
@@ -33,53 +32,16 @@ class _BookDetailsState extends State<BookDetails> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.book.bookTitle.toString()),
-        actions: [
-          PopupMenuButton(itemBuilder: (context) {
-            return [
-              PopupMenuItem<int>(
-                value: 0,
-                enabled: bookowner,
-                child: const Text("Update"),
-              ),
-              PopupMenuItem<int>(
-                enabled: bookowner,
-                value: 1,
-                child: const Text("Delete"),
-              ),
-            ];
-          }, onSelected: (value) {
-            if (value == 0) {
-              if (widget.book.userId == widget.book.userId) {
-                updateDialog();
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text("Not allowed!!!"),
-                  backgroundColor: Colors.red,
-                ));
-              }
-            } else if (value == 1) {
-              if (widget.book.userId == widget.book.userId) {
-                deleteDialog();
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text("Not allowed!"),
-                  backgroundColor: Colors.red,
-                ));
-              }
-            } else if (value == 2) {
-            }
-          }),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(children: [
           SizedBox(
             height: screenHeight * 0.4,
             width: screenWidth,
-            //  padding: const EdgeInsets.all(4.0),
             child: Image.network(
-                fit: BoxFit.fill,
-                "${MyConfig.server}/book_bytes/assets/books/${widget.book.bookId}.png"),
+              "${MyConfig.server}/book_bytes/assets/books/${widget.book.bookId}.png",
+              fit: BoxFit.fill,
+            ),
           ),
           Container(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -88,10 +50,12 @@ class _BookDetailsState extends State<BookDetails> {
               Container(
                 alignment: Alignment.center,
                 child: Text(
-                  textAlign: TextAlign.center,
                   widget.book.bookTitle.toString(),
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold),
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               Text(
@@ -106,14 +70,40 @@ class _BookDetailsState extends State<BookDetails> {
               const SizedBox(
                 height: 8,
               ),
-              Text(widget.book.bookDesc.toString(),
-                  textAlign: TextAlign.justify),
+              Text(widget.book.bookDesc.toString(), textAlign: TextAlign.justify),
               Text(
                 "RM ${widget.book.bookPrice}",
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               Text("Quantity Available ${widget.book.bookQty}"),
+              const Divider(
+                        height: 16,
+                        color: Colors.grey,
+                      ), 
+                Padding(
+                  padding: const EdgeInsets.all(40.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      insertCartDialog();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white, backgroundColor: Colors.black, // Set the text color
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15), // Set padding
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10), // Set rounded corners
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.shopping_cart),
+                        SizedBox(width: 8), 
+                        Text("Add to Cart"),
+                      ],
+                    ),
+                  ),
+                )
+
             ]),
           ),
         ]),
@@ -121,15 +111,16 @@ class _BookDetailsState extends State<BookDetails> {
     );
   }
 
-  void updateDialog() {
+  void insertCartDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+            borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          ),
           title: const Text(
-            "Update this book?",
+            "Insert to cart?",
             style: TextStyle(),
           ),
           content: const Text("Are you sure?", style: TextStyle()),
@@ -141,6 +132,20 @@ class _BookDetailsState extends State<BookDetails> {
               ),
               onPressed: () {
                 Navigator.of(context).pop();
+
+                final bookQty = widget.book.bookQty;
+                final qtyAsInt = bookQty != null ? int.tryParse(bookQty) : null;
+
+                if (qtyAsInt != null && qtyAsInt > 0) {
+                  insertCart();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Book out of stock"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
               },
             ),
             TextButton(
@@ -150,10 +155,6 @@ class _BookDetailsState extends State<BookDetails> {
               ),
               onPressed: () {
                 Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text("Canceled"),
-                  backgroundColor: Colors.red,
-                ));
               },
             ),
           ],
@@ -162,70 +163,32 @@ class _BookDetailsState extends State<BookDetails> {
     );
   }
 
-  void deleteDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          title: const Text(
-            "Delete this book?",
-            style: TextStyle(),
-          ),
-          content: const Text("Are you sure?", style: TextStyle()),
-          actions: <Widget>[
-            TextButton(
-              child: const Text(
-                "Yes",
-                style: TextStyle(),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                deleteBook();
-              },
-            ),
-            TextButton(
-              child: const Text(
-                "No",
-                style: TextStyle(),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text("Canceled"),
-                  backgroundColor: Colors.red,
-                ));
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void deleteBook() {
+  void insertCart() {
     http.post(
-        Uri.parse("${MyConfig.server}/book_bytes/php/delete_book.php"),
-        body: {
-          "userid": widget.user.userid.toString(),
-          "bookid": widget.book.bookId.toString(),
-        }).then((response) {
+      Uri.parse("${MyConfig.server}/book_bytes/php/insert_cart.php"),
+      body: {
+        "buyer_id": widget.user.userid.toString(),
+        "seller_id": widget.book.userId.toString(),
+        "book_id": widget.book.bookId.toString(),
+      },
+    ).then((response) {
+      log(response.body);
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data['status'] == "success") {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text("Delete Success"),
-            backgroundColor: Colors.green,
-          ));
-          Navigator.of(context).pop();
-          // Navigator.push(context,
-          //     MaterialPageRoute(builder: (content) => const LoginPage()));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Success"),
+              backgroundColor: Colors.green,
+            ),
+          );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text("Delete Failed"),
-            backgroundColor: Colors.red,
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Failed"),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
       }
     });

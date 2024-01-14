@@ -1,4 +1,4 @@
-//Buyer page
+
 
 import 'dart:convert';
 import 'dart:developer';
@@ -10,6 +10,7 @@ import '../models/user.dart';
 import '../myconfig.dart';
 import '../mydrawer.dart';
 import 'bookdetails.dart';
+import 'cart.dart';
 
 class MainPage extends StatefulWidget {
   final User userdata;
@@ -68,7 +69,15 @@ class _MainPageState extends State<MainPage> {
                 onPressed: () {
                   showSearchDialog();
                 },
-                icon: const Icon(Icons.search))
+                icon: const Icon(Icons.search)),
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (content) => CartPage(user: widget.userdata)));
+                },
+                icon: const Icon(Icons.add_shopping_cart))
           ],
           backgroundColor: Colors.pink,
           elevation: 0.0,

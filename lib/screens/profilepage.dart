@@ -1,9 +1,9 @@
-
 import 'package:book_bytes/screens/loginscreen.dart';
 import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../mydrawer.dart';
 import 'registration.dart';
+import 'updateprofile.dart'; // Import the UpdateProfilePage
 
 class ProfilePage extends StatefulWidget {
   final User userdata;
@@ -21,145 +21,149 @@ class _ProfilePageState extends State<ProfilePage> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-        appBar: AppBar(
-            iconTheme: const IconThemeData(color: Colors.white),
-            title: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "My Account",
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "My Account",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(
+              width: 40,
+            ),
+          ],
+        ),
+        backgroundColor: Colors.pink,
+        elevation: 0.0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey,
+            height: 1.0,
+          ),
+        ),
+      ),
+      drawer: MyDrawer(
+        page: 'account',
+        userdata: widget.userdata,
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            height: screenHeight * 0.25,
+            padding: const EdgeInsets.all(4),
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                child: Image.asset(
+                  'assets/images/profilepic.png',
+                  fit: BoxFit.cover,
                 ),
-                SizedBox(
-                  width: 40,
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.fromLTRB(16, 8, 16, 30),
+            padding: const EdgeInsets.all(16),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
-            backgroundColor: Colors.pink,
-            elevation: 0.0,
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(1.0),
-              child: Container(
-                color: Colors.grey,
-                height: 1.0,
-              ),
-            )),
-        drawer: MyDrawer(
-          page: 'account',
-          userdata: widget.userdata,
-        ),
-        body: Center(
-          child: Column(children: [
-            Container(
-              height: screenHeight * 0.25,
-              padding: const EdgeInsets.all(4),
-              child: Card(
-                  child: Row(children: [
-                Container(
-                  // ignore: prefer_const_constructors
-                  padding: EdgeInsets.all(8),
-                  width: screenWidth * 0.4,
-                  height: screenHeight * 0.4,
-                  child: Image.asset(
-                    'assets/images/profilepic.png',
-                    fit: BoxFit.contain,
-                  ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Name: ${widget.userdata.username.toString()}",
+                  style: const TextStyle(fontSize: 18),
                 ),
-                Expanded(
-                    flex: 7,
-                    child: Column(
-                      children: [
-                        Text(
-                          widget.userdata.username.toString(),
-                          style: const TextStyle(fontSize: 24),
-                        ),
-                        const Divider(
-                          color: Colors.blueGrey,
-                        )
-                      ],
-                    ))
-              ])),
+                const SizedBox(height: 12),
+                Text(
+                  "Email: ${widget.userdata.useremail.toString()}",
+                  style: const TextStyle(fontSize: 18),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  "Phone Number: ${widget.userdata.username.toString()}",
+                  style: const TextStyle(fontSize: 18),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  "Password: ${widget.userdata.username.toString()}",
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ],
             ),
-            Container(
-              height: screenHeight * 0.035,
-              alignment: Alignment.center,
-              color: Colors.pinkAccent,
-              width: screenWidth,
-              child: const Text("UPDATE ACCOUNT",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold)),
-            ),
-            // const Divider(
-            //   color: Colors.blueGrey,
-            // ),
-            Expanded(
-                child: ListView(
-                    padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                    shrinkWrap: true,
-                    children: [
-                  MaterialButton(
-                    onPressed: () {},
-                    child: const Text("UPDATE NAME"),
-                  ),
-                  const Divider(
-                    height: 2,
-                  ),
-                  MaterialButton(
-                    onPressed: () {},
-                    child: const Text("UPDATE PASSWORD"),
-                  ),
-                  const Divider(
-                    height: 2,
-                  ),
-                  MaterialButton(
-                    onPressed: () {},
-                    child: const Text("UPDATE PHONE NUMBER"),
-                  ),
-                  const Divider(
-                    height: 2,
-                  ),
-                  MaterialButton(
-                    onPressed: () {},
-                    child: const Text("UPDATE ADDRESS"),
-                  ),
-                  const Divider(
-                    height: 2,
-                  ),
-                  MaterialButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (content) => const Registration()));
-                    },
-                    child: const Text("NEW REGISTRATION"),
-                  ),
-                  const Divider(
-                    height: 2,
-                  ),
-                  MaterialButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (content) => const LoginPage()));
-                    },
-                    child: const Text("LOGIN"),
-                  ),
-                  const Divider(
-                    height: 2,
-                  ),
-                  MaterialButton(
-                    onPressed: () {
-                      {}
-                    },
-                    child: const Text("LOGOUT"),
-                  ),
-                ])),
-          ]),
-        ));
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (content) => const LoginPage(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.pink,
+                ),
+                icon: Icon(Icons.login),
+                label: const Text("LOGIN"),
+              ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (content) => const Registration(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.pink,
+                ),
+                icon: Icon(Icons.person_add),
+                label: const Text("REGISTER"),
+              ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (content) => UpdateProfilePage(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.pink,
+                ),
+                icon: Icon(Icons.update),
+                label: const Text("UPDATE"),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

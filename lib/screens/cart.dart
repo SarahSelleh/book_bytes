@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../models/cart.dart';
 import '../models/user.dart';
 import '../myconfig.dart';
+import 'billscreen.dart';
 
 
 class CartPage extends StatefulWidget {
@@ -181,12 +182,23 @@ class _CartPageState extends State<CartPage> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (content) => BillScreen(
+                                    user: widget.user,
+                                    totalprice: total,
+                                  ),
+                                ),
+                              );
+                              loadUserCart();
                             },
-                            child: Text("CHECKOUT"),
+                            child: const Text("CHECKOUT"),
                           ),
                         ],
                       ),
+
                     ],
                   ),
                 ),
